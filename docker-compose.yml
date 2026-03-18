@@ -1,13 +1,60 @@
-mediamtx:
+services:
+
+  flask-app:
+    build: .
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env.docker
+    depends_on:
+      - postgresql
+      - mediamtx
+    networks:
+      - omni_net
+    volumes:
+      - ./videos:/app/videos
+
+  postgresql:
+    image: postgres:15-alpine
+    container_name: postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - omni_net
+
+  mediamtx:
     image: bluenviron/mediamtx:latest
     container_name: mediamtx
     ports:
       - "8554:8554"
-      - "8555:8555"
-      - "8556:8556"
-      - "8557:8557"
       - "8888:8888"
     volumes:
       - ./mediamtx.yml:/mediamtx.yml
     networks:
       - omni_net
+
+  ffmpeg:
+    image: jrottenberg/ffmpeg:4.4-alpine
+    container_name: ffmpeg
+    depends_on:
+      - mediamtx
+    volumes:
+      - ./videos:/videos
+      - ./stream.sh:/stream.sh
+    entrypoint: ["/bin/sh", "/stream.sh"]
+    networks:
+      - omni_net
+
+networks:
+  omni_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
