@@ -11,7 +11,7 @@ services:
       - postgresql
       - mediamtx
     networks:
-      - omni_net
+      - uni_cam_net
     volumes:
       - ./videos:/app/videos
 
@@ -27,7 +27,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - omni_net
+      - uni_cam_net
 
   mediamtx:
     image: bluenviron/mediamtx:latest
@@ -38,7 +38,7 @@ services:
     volumes:
       - ./mediamtx.yml:/mediamtx.yml
     networks:
-      - omni_net
+      - uni_cam_net
 
   ffmpeg:
     image: jrottenberg/ffmpeg:4.4-alpine
@@ -50,10 +50,10 @@ services:
       - ./stream.sh:/stream.sh
     entrypoint: ["/bin/sh", "/stream.sh"]
     networks:
-      - omni_net
+      - uni_cam_net
 
 networks:
-  omni_net:
+  uni_cam_net:
     driver: bridge
 
 volumes:

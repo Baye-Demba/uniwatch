@@ -6,7 +6,7 @@ __pycache__/
 
 # Variables secrètes - JAMAIS sur GitHub
 .env
-
+.env.docker
 # VS Code
 .vscode/
 
